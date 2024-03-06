@@ -15,6 +15,7 @@ public class InventorySystem {
         new InventorySystem().Load();
     }
     
+//    test for gh
     private void Load(){
         try {
             Connection conn = getConnection();
