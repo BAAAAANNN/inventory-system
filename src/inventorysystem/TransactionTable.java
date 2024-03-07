@@ -1,20 +1,69 @@
 package inventorysystem;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
+import java.util.Vector;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class TransactionTable extends javax.swing.JFrame {
     DefaultTableModel tableModel;
+    Connection conn;
     
     public void updateTable(Object[] rowData) {
         tableModel.addRow(rowData);
     }
     
-    public TransactionTable() {
+     public TransactionTable() {
         initComponents();
         tableModel = new DefaultTableModel();
-        jTable1.setModel(tableModel);
+        transactiontbl.setModel(tableModel);
+        try {
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/inventorysystem", "root", "");
+            Fetch();
+        } catch(SQLException ex) {
+            System.out.println("Error connecting to the database: " + ex.getMessage());
+        }
+
+        // Add the JTable to a JScrollPane and then add the JScrollPane to jPanel1
+        JScrollPane jScrollPane1 = new JScrollPane(transactiontbl);
+        jScrollPane1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        jPanel1.add(jScrollPane1);
     }
+
+
+    
+    private void Fetch(){
+        String displaysql = "SELECT * FROM tbl_combined"; // Correct SQL query syntax
+        try {
+            PreparedStatement pst = conn.prepareStatement(displaysql);
+            ResultSet rs = pst.executeQuery();
+
+            // Clear existing rows from the table
+            tableModel.setRowCount(0);
+
+            // Iterate through the result set and add data to the table
+            while (rs.next()) {
+                Vector row = new Vector();
+                row.add(rs.getObject("fld_item_id"));
+                row.add(rs.getObject("fld_category"));
+                row.add(rs.getObject("fld_item_name"));
+                row.add(rs.getObject("fld_quantity"));
+                row.add(rs.getObject("fld_unit_price"));
+                row.add(rs.getObject("fld_transaction_type"));
+                row.add(rs.getObject("fld_date_added"));
+                tableModel.addRow(row);
+            }
+        } catch (SQLException ex) {
+            System.out.println("Error executing SQL query: " + ex.getMessage());
+        }
+    }
+    
     
     public void addDataToTable(Object[] rowData) {
         tableModel.addRow(rowData);
@@ -43,7 +92,7 @@ public class TransactionTable extends javax.swing.JFrame {
         btnSummary = new javax.swing.JButton();
         lblTransactionTbl = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        transactiontbl = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -140,7 +189,7 @@ public class TransactionTable extends javax.swing.JFrame {
         lblTransactionTbl.setAlignmentY(0.0F);
         lblTransactionTbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        transactiontbl.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null, null, null},
                 {null, null, null, null, null, null, null},
@@ -159,7 +208,7 @@ public class TransactionTable extends javax.swing.JFrame {
                 return types [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(transactiontbl);
 
         btnEdit.setText("Edit");
         btnEdit.setBorderPainted(false);
@@ -290,12 +339,12 @@ public class TransactionTable extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable jTable1;
     private javax.swing.JLabel lblTransactionTbl;
+    private javax.swing.JTable transactiontbl;
     // End of variables declaration//GEN-END:variables
 
     void setItems(List<InventoryItem> items) {
-         DefaultTableModel model = (DefaultTableModel) jTable1.getModel();
+         DefaultTableModel model = (DefaultTableModel) transactiontbl.getModel();
     model.setRowCount(0);
 
     for (InventoryItem Item : items) {
