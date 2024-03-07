@@ -1,9 +1,8 @@
 package inventorysystem;
 
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.sql.*;
+import javax.swing.JFrame;
 
 public class InventorySystem {
     private static String address = "jdbc:mysql://localhost:3306/inventorysystem";
@@ -13,6 +12,8 @@ public class InventorySystem {
     public static void main(String[] args) {
         InventorySystem callMe = new InventorySystem();
         new InventorySystem().Load();
+        
+
     }
     
 //    test for gh
@@ -26,7 +27,7 @@ public class InventorySystem {
             e.printStackTrace();
         }
         
-        Home LoginFrame = new Home();
+        Login LoginFrame = new Login();
         LoginFrame.setVisible(true);
         LoginFrame.pack();
         LoginFrame.setLocationRelativeTo(null);//to center
@@ -39,6 +40,7 @@ public class InventorySystem {
         return DriverManager.getConnection(address, userName, passWord);
     }
     
+
     
 //  Move to diff location
 //    int loginCheck(String userEmail, String passWord) {
