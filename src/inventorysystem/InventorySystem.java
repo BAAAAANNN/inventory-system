@@ -40,38 +40,5 @@ public class InventorySystem {
         return DriverManager.getConnection(address, userName, passWord);
     }
     
-
-    
-//  Move to diff location
-//    int loginCheck(String userEmail, String passWord) {
-//        int rowsAffected = 0;
-//        try {
-//            Connection conn = DriverManager.getConnection(address, userName, passWord);
-//            String sqlQuery = "SELECT COUNT(*) FROM tbl_users "
-//                    + "WHERE fld_username = ? AND fld_password = ?;";
-//            conn.setAutoCommit(false);
-//            PreparedStatement stmt = conn.prepareStatement(sqlQuery);
-//            stmt.setString(1, userEmail);
-//            stmt.setString(2, passWord);
-//            
-//            ResultSet resultSet = stmt.executeQuery();
-//        
-//            if (resultSet.next()) {
-//            rowsAffected = resultSet.getInt(1);
-//            }
-//     
-//            conn.commit();
-//        
-//            resultSet.close();
-//            stmt.close();
-//            conn.close();
-//        } catch (SQLException e) {
-//            System.out.println("SQL error: " + e.getMessage());
-//        } catch (Exception e){
-//            System.out.println("Error: " + e.toString());
-//        }
-//        
-//        return rowsAffected; 
-//    }
         
 }

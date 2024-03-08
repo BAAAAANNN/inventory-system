@@ -10,7 +10,7 @@ import java.sql.ResultSet;
 public class InventoryService {
     
     public int quantity;
-        
+       
     
         
     private final List<InventoryItem> inventoryItems;

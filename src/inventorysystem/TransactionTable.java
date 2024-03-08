@@ -18,15 +18,8 @@ public class TransactionTable extends javax.swing.JFrame {
     
      public TransactionTable() {
         initComponents();
-   
 
-  
-        try {
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/inventorysystem", "root", "");
-            Fetch();
-        } catch(SQLException ex) {
-            System.out.println("Error connecting to the database: " + ex.getMessage());
-        }
+        Fetch();
         
         transactiontbl = tblTransaction;
         tableModel = (DefaultTableModel) tblTransaction.getModel();
@@ -35,7 +28,7 @@ public class TransactionTable extends javax.swing.JFrame {
  
       private void Fetch() {
         String displaysql = "SELECT * FROM tbl_combined";
-        try {
+        try (Connection conn = new InventorySystem().getConnection()){
             PreparedStatement pst = conn.prepareStatement(displaysql);
             ResultSet rs = pst.executeQuery();
 
@@ -56,33 +49,53 @@ public class TransactionTable extends javax.swing.JFrame {
       
 
   
-        public DefaultTableModel getTableModel() {
-        DefaultTableModel model = new DefaultTableModel();
-        try {
-            String displaysql = "SELECT * FROM tbl_combined";
-            PreparedStatement pst = conn.prepareStatement(displaysql);
-            ResultSet rs = pst.executeQuery();
+//        public DefaultTableModel getTableModel() {
+//        DefaultTableModel model = new DefaultTableModel();
+//        try {
+//            String displaysql = "SELECT * FROM tbl_combined";
+//            PreparedStatement pst = conn.prepareStatement(displaysql);
+//            ResultSet rs = pst.executeQuery();
+//            
+//            model.addColumn("Item ID");
+//            model.addColumn("Category");
+//            model.addColumn("Item Name");
+//            model.addColumn("Quantity");
+//            model.addColumn("Unit Price");
+//            model.addColumn("Transaction Type");
+//            model.addColumn("Date Addasdasdasded");
+//
+//            while (rs.next()) {
+//                model.addRow(new String[]{rs.getString(1), rs.getString(2), rs.getString(3),
+//                    rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)
+//                });
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Error executing SQL query: " + e.getMessage());
+//        }
+//        return model;
+//    }
+        
+      
+    private void editRow() {
+        // Method to edit the selected row
+        int selectedRowIndex = tblTransaction.getSelectedRow();
+        if (selectedRowIndex != -1) { // If a row is selected
+            // Let's say you want to edit the data in the second column (1-based index)
+//            String newValue = "New Value"; // New value you want to set
+            Object[] rowData = new Object[tableModel.getColumnCount()]; // Create an array to hold the selected row data
+                    for (int i = 0; i < tableModel.getColumnCount(); i++) {
+                        rowData[i] = tableModel.getValueAt(selectedRowIndex, i); // Get data from each column of the selected row
+                    }
+            InventoryManagement Home3Frame = new InventoryManagement();
+            Home3Frame.setVisible(true);
+            Home3Frame.pack();
+            Home3Frame.setLocationRelativeTo(null);
+            Home3Frame.updateItem(rowData);
             
-            model.addColumn("Item ID");
-            model.addColumn("Category");
-            model.addColumn("Item Name");
-            model.addColumn("Quantity");
-            model.addColumn("Unit Price");
-            model.addColumn("Transaction Type");
-            model.addColumn("Date Added");
-
-            while (rs.next()) {
-                model.addRow(new String[]{rs.getString(1), rs.getString(2), rs.getString(3),
-                    rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)
-                });
-            }
-        } catch (SQLException e) {
-            System.out.println("Error executing SQL query: " + e.getMessage());
+//            this.dispose();
+//            tableModel.setValueAt(newValue, selectedRowIndex, 1); // Update the value in the table model
         }
-        return model;
     }
-        
-        
 
     
     public void updateTable(Object[] rowData) {
@@ -311,20 +324,23 @@ public class TransactionTable extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-       int rowIndex = tblTransaction.getSelectedRow();
-        if (rowIndex != -1) {
-            Object[] rowData = new Object[7];
-            for (int i = 0; i < 7; i++) {
-                rowData[i] = tblTransaction.getValueAt(rowIndex, i);
-            }
-            InventoryManagement itemPanel = new InventoryManagement(rowData);
-            itemPanel.setVisible(true);
-            itemPanel.pack();
-            itemPanel.setLocationRelativeTo(null);
-            dispose(); // Close the TransactionTable window
-        } else {
-            JOptionPane.showMessageDialog(null, "Please select a row to edit.");
-        }
+
+          editRow();
+
+//       int rowIndex = tblTransaction.getSelectedRow();
+//        if (rowIndex != -1) {
+//            Object[] rowData = new Object[7];
+//            for (int i = 0; i < 7; i++) {
+//                rowData[i] = tblTransaction.getValueAt(rowIndex, i);
+//            }
+//            InventoryManagement itemPanel = new InventoryManagement(rowData);
+//            itemPanel.setVisible(true);
+//            itemPanel.pack();
+//            itemPanel.setLocationRelativeTo(null);
+//            dispose(); // Close the TransactionTable window
+//        } else {
+//            JOptionPane.showMessageDialog(null, "Please select a row to edit.");
+//        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnSummaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSummaryActionPerformed
@@ -393,5 +409,7 @@ public class TransactionTable extends javax.swing.JFrame {
     List<InventoryItem> getItems() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
+    
+    
 }
 

@@ -1,6 +1,8 @@
 package inventorysystem;
 
+import java.sql.SQLException;
 import java.util.List;
+import java.sql.Connection;
      
 public class InventoryManagement extends javax.swing.JFrame {
     
@@ -146,6 +148,11 @@ public class InventoryManagement extends javax.swing.JFrame {
 
         cmbCat.setForeground(new java.awt.Color(255, 255, 255));
         cmbCat.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Select...", "Supplies", "Equipment", "Furniture" }));
+        cmbCat.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cmbCatActionPerformed(evt);
+            }
+        });
 
         jLabel1.setBackground(new java.awt.Color(255, 255, 255));
         jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 36)); // NOI18N
@@ -417,33 +424,55 @@ public class InventoryManagement extends javax.swing.JFrame {
         displayItems();
     }
     
-    private void updateItem() {
-    String itemNameToUpdate = tfdItem.getText();
-    InventoryItem existingItem = inventoryService.getItemByName(itemNameToUpdate);
-
-    if (existingItem != null) {
-        // Assuming you have appropriate setters in your InventoryItem class
-        existingItem.setCategory((String) cmbCat.getSelectedItem());
-        existingItem.setUnitPrice(Double.parseDouble(tfdUnitPrice.getText()));
-        existingItem.setQuantity(Integer.parseInt(tfdQuantity.getText()));
-        existingItem.setInOut(tfdType.getText());
-//        existingItem.setDateImportedExported(jTextField5.getText());
-
-        inventoryService.updateItem(existingItem);
-
-        displayItems();
-    } else {
-        System.out.println("Item not found for update.");
-    }
-}
-
+     public void updateItem(Object[] rowData){
+      tfdItem.setText(rowData[2].toString()); //name
+      tfdQuantity.setText(rowData[3].toString()); //quantity
+      tfdUnitPrice.setText(rowData[4].toString()); //
+      tfdType.setText(rowData[5].toString()); //
+      cmbCat.setSelectedItem(rowData[1].toString());
+      
+      try (Connection conn = new InventorySystem().getConnection()) {
+          String sqlQuery = "UPDATE tbl_combined SET fld_item_name = ?, fld_quantity = ?, fld_category = ?, fld_unit_price = ?, fld_transaction_type = ? WHERE fld_item_id = ?";
+//            sqlQuery.setString(1, InventoryItem item);
+//            sqlQuery.setInt(2, item.quantity);
+//            sqlQuery.setDouble(3, item.unitPrice);
+//            sqlQuery.setString(4, item.category);
+//            sqlQuery.executeUpdate();
+      } catch (SQLException e) {
+        e.printStackTrace();
+       }
     
-    private void deleteItem() {
-        String itemNameToDelete = tfdItem.getText();
-        inventoryService.deleteItem(itemNameToDelete);
-        
-        displayItems();
     }
+   
+   
+    
+    
+//    private void updateItem(boolean isDelete) {
+//     try {
+//            String itemNameToUpdate = tfdItem.getText();
+//            InventoryItem existingItem = inventoryService.getItemByName(itemNameToUpdate);
+//
+//            if (existingItem != null) {
+//                // If isDelete is true, delete the item; otherwise, update it
+//                if (isDelete) {
+//                    inventoryService.deleteItem(itemNameToUpdate);
+//                } else {
+//                    // Assuming you have appropriate setters in your InventoryItem class
+//                    existingItem.setCategory((String) cmbCat.getSelectedItem());
+//                    existingItem.setUnitPrice(Double.parseDouble(tfdUnitPrice.getText()));
+//                    existingItem.setQuantity(Integer.parseInt(tfdQuantity.getText()));
+//                    existingItem.setInOut(tfdType.getText());
+//
+//                    inventoryService.updateItem(existingItem);
+//                }
+//                displayItems(); // Refresh display after updating or deleting item
+//            } else {
+//                System.out.println("Item not found for update.");
+//            }
+//        } catch (NumberFormatException e) {
+//            System.err.println("Error: Invalid input for price or quantity.");
+//        }
+//    }
     
      private void displayItems() {
         List<InventoryItem> items = inventoryService.getItems();
@@ -477,7 +506,9 @@ public class InventoryManagement extends javax.swing.JFrame {
         transactionPanel.pack();
         transactionPanel.setLocationRelativeTo(null);        
         this.dispose();
-        updateItem();
+//        updateItem(false);
+        
+        
     }//GEN-LAST:event_btnUpdateActionPerformed
 
     private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
@@ -487,7 +518,7 @@ public class InventoryManagement extends javax.swing.JFrame {
         transactionPanel.pack();
         transactionPanel.setLocationRelativeTo(null);        
         this.dispose();
-        deleteItem();
+        deleteItem(true);
         
         String itemNameToDelete = tfdItem.getText();
         inventoryService.deleteItem(itemNameToDelete);
@@ -502,6 +533,11 @@ public class InventoryManagement extends javax.swing.JFrame {
         transactionPanel.setVisible(true);
         transactionPanel.pack();
         transactionPanel.setLocationRelativeTo(null);        
+        
+        TransactionTable transactionTable = new TransactionTable();
+        transactionTable.setVisible(true);
+        transactionTable.setLocationRelativeTo(null); 
+        
         this.dispose();
         readItems();
     }//GEN-LAST:event_jButton8ActionPerformed
@@ -509,6 +545,10 @@ public class InventoryManagement extends javax.swing.JFrame {
     private void tfdTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfdTypeActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tfdTypeActionPerformed
+
+    private void cmbCatActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmbCatActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cmbCatActionPerformed
 
     /**
      * @param args the command line arguments
@@ -574,5 +614,9 @@ public class InventoryManagement extends javax.swing.JFrame {
     private javax.swing.JTextField tfdType;
     private javax.swing.JTextField tfdUnitPrice;
     // End of variables declaration//GEN-END:variables
+
+    private void deleteItem(boolean b) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 
 }
