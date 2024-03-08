@@ -3,9 +3,13 @@ package inventorysystem;
 import java.util.List;
      
 public class InventoryManagement extends javax.swing.JFrame {
-
+    
     private TransactionTable home4Reference;
     private InventoryService inventoryService;
+
+    InventoryManagement(Object[] rowData) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
     private void addButtonActionPerformed(java.awt.event.ActionEvent evt) {
         // Assuming you have text fields for user input, adapt this based on your actual input components
@@ -50,12 +54,12 @@ public class InventoryManagement extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         tfdItem = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
+        tfdUnitPrice = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         tfdQuantity = new javax.swing.JTextField();
         jLabel9 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
-        jTextField4 = new javax.swing.JTextField();
+        tfdType = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jButton8 = new javax.swing.JButton();
         btnAdd = new javax.swing.JButton();
@@ -97,10 +101,11 @@ public class InventoryManagement extends javax.swing.JFrame {
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/inventorysystem/PADAYON2.png"))); // NOI18N
 
         jLabel12.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel12.setForeground(new java.awt.Color(0, 0, 0));
+        jLabel12.setForeground(new java.awt.Color(153, 153, 153));
         jLabel12.setText("        Office Inventory System");
 
-        jLabel13.setForeground(new java.awt.Color(153, 153, 153));
+        jLabel13.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(0, 0, 0));
         jLabel13.setText("        Inventory Management");
         jLabel13.setToolTipText("");
 
@@ -176,9 +181,9 @@ public class InventoryManagement extends javax.swing.JFrame {
         jLabel7.setAlignmentY(0.0F);
         jLabel7.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jTextField2.addActionListener(new java.awt.event.ActionListener() {
+        tfdUnitPrice.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField2ActionPerformed(evt);
+                tfdUnitPriceActionPerformed(evt);
             }
         });
 
@@ -215,9 +220,9 @@ public class InventoryManagement extends javax.swing.JFrame {
         jLabel10.setAlignmentY(0.0F);
         jLabel10.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        jTextField4.addActionListener(new java.awt.event.ActionListener() {
+        tfdType.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField4ActionPerformed(evt);
+                tfdTypeActionPerformed(evt);
             }
         });
 
@@ -323,9 +328,9 @@ public class InventoryManagement extends javax.swing.JFrame {
                                             .addComponent(tfdQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(tfdUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 222, javax.swing.GroupLayout.PREFERRED_SIZE)
                                             .addComponent(jLabel7, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                                    .addComponent(jTextField4)
+                                    .addComponent(tfdType)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addComponent(jLabel8, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addGap(238, 375, Short.MAX_VALUE))
@@ -358,11 +363,11 @@ public class InventoryManagement extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(tfdQuantity, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(tfdUnitPrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(26, 26, 26)
                         .addComponent(jLabel10)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jTextField4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(tfdType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(55, Short.MAX_VALUE))
         );
@@ -387,9 +392,9 @@ public class InventoryManagement extends javax.swing.JFrame {
     try {
         String category = (String) cmbCat.getSelectedItem();
         String itemName = tfdItem.getText();
-        double unitPrice = Double.parseDouble(jTextField2.getText());
+        double unitPrice = Double.parseDouble(tfdUnitPrice.getText());
         int quantity = Integer.parseInt(tfdQuantity.getText());
-        String inOut = jTextField4.getText();
+        String inOut = tfdType.getText();
 //        String dateImportedExported = jTextField5.getText();
 
         InventoryItem newItem = new InventoryItem();
@@ -419,9 +424,9 @@ public class InventoryManagement extends javax.swing.JFrame {
     if (existingItem != null) {
         // Assuming you have appropriate setters in your InventoryItem class
         existingItem.setCategory((String) cmbCat.getSelectedItem());
-        existingItem.setUnitPrice(Double.parseDouble(jTextField2.getText()));
+        existingItem.setUnitPrice(Double.parseDouble(tfdUnitPrice.getText()));
         existingItem.setQuantity(Integer.parseInt(tfdQuantity.getText()));
-        existingItem.setInOut(jTextField4.getText());
+        existingItem.setInOut(tfdType.getText());
 //        existingItem.setDateImportedExported(jTextField5.getText());
 
         inventoryService.updateItem(existingItem);
@@ -452,9 +457,9 @@ public class InventoryManagement extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_tfdItemActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void tfdUnitPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfdUnitPriceActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_tfdUnitPriceActionPerformed
 
     private void tfdQuantityActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfdQuantityActionPerformed
         // TODO add your handling code here:
@@ -483,6 +488,11 @@ public class InventoryManagement extends javax.swing.JFrame {
         transactionPanel.setLocationRelativeTo(null);        
         this.dispose();
         deleteItem();
+        
+        String itemNameToDelete = tfdItem.getText();
+        inventoryService.deleteItem(itemNameToDelete);
+
+        displayItems(); // Update the display after deleting the item
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -496,9 +506,9 @@ public class InventoryManagement extends javax.swing.JFrame {
         readItems();
     }//GEN-LAST:event_jButton8ActionPerformed
 
-    private void jTextField4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField4ActionPerformed
+    private void tfdTypeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tfdTypeActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField4ActionPerformed
+    }//GEN-LAST:event_tfdTypeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -559,10 +569,10 @@ public class InventoryManagement extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JTextField jTextField2;
-    private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField tfdItem;
     private javax.swing.JTextField tfdQuantity;
+    private javax.swing.JTextField tfdType;
+    private javax.swing.JTextField tfdUnitPrice;
     // End of variables declaration//GEN-END:variables
 
 }

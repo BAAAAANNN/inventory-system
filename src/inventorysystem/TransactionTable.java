@@ -6,79 +6,113 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Vector;
-import javax.swing.JScrollPane;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class TransactionTable extends javax.swing.JFrame {
     DefaultTableModel tableModel;
     Connection conn;
+    JTable transactiontbl; 
     
-    public void updateTable(Object[] rowData) {
-        tableModel.addRow(rowData);
-    }
     
      public TransactionTable() {
         initComponents();
-        tableModel = new DefaultTableModel();
-        transactiontbl.setModel(tableModel);
+   
+
+  
         try {
             conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/inventorysystem", "root", "");
             Fetch();
         } catch(SQLException ex) {
             System.out.println("Error connecting to the database: " + ex.getMessage());
         }
-
-        // Add the JTable to a JScrollPane and then add the JScrollPane to jPanel1
-        JScrollPane jScrollPane1 = new JScrollPane(transactiontbl);
-        jScrollPane1.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        jPanel1.add(jScrollPane1);
+        
+        transactiontbl = tblTransaction;
+        tableModel = (DefaultTableModel) tblTransaction.getModel();
     }
 
-
-    
-    private void Fetch(){
-        String displaysql = "SELECT * FROM tbl_combined"; // Correct SQL query syntax
+ 
+      private void Fetch() {
+        String displaysql = "SELECT * FROM tbl_combined";
         try {
             PreparedStatement pst = conn.prepareStatement(displaysql);
             ResultSet rs = pst.executeQuery();
 
             // Clear existing rows from the table
-            tableModel.setRowCount(0);
+            DefaultTableModel model = (DefaultTableModel)tblTransaction.getModel();
+            model.setRowCount(0); // Clear the table before populating
 
             // Iterate through the result set and add data to the table
             while (rs.next()) {
-                Vector row = new Vector();
-                row.add(rs.getObject("fld_item_id"));
-                row.add(rs.getObject("fld_category"));
-                row.add(rs.getObject("fld_item_name"));
-                row.add(rs.getObject("fld_quantity"));
-                row.add(rs.getObject("fld_unit_price"));
-                row.add(rs.getObject("fld_transaction_type"));
-                row.add(rs.getObject("fld_date_added"));
-                tableModel.addRow(row);
+               model.addRow(new String[]{rs.getString(1), rs.getString(2), rs.getString(3),
+                   rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)
+               });
             }
-        } catch (SQLException ex) {
-            System.out.println("Error executing SQL query: " + ex.getMessage());
+        } catch (SQLException e) {
+            System.out.println("Error executing SQL query: " + e.getMessage());
         }
     }
+      
+
+  
+        public DefaultTableModel getTableModel() {
+        DefaultTableModel model = new DefaultTableModel();
+        try {
+            String displaysql = "SELECT * FROM tbl_combined";
+            PreparedStatement pst = conn.prepareStatement(displaysql);
+            ResultSet rs = pst.executeQuery();
+            
+            model.addColumn("Item ID");
+            model.addColumn("Category");
+            model.addColumn("Item Name");
+            model.addColumn("Quantity");
+            model.addColumn("Unit Price");
+            model.addColumn("Transaction Type");
+            model.addColumn("Date Added");
+
+            while (rs.next()) {
+                model.addRow(new String[]{rs.getString(1), rs.getString(2), rs.getString(3),
+                    rs.getString(4), rs.getString(5), rs.getString(6), rs.getString(7)
+                });
+            }
+        } catch (SQLException e) {
+            System.out.println("Error executing SQL query: " + e.getMessage());
+        }
+        return model;
+    }
+        
+        
+
     
-    
+    public void updateTable(Object[] rowData) {
+        tableModel.addRow(rowData);
+    }
+
     public void addDataToTable(Object[] rowData) {
         tableModel.addRow(rowData);
     }
-    
-    public void updateDataInTable(int rowIndex, Object[] rowData) {
-        for (int i = 0; i < rowData.length; i++) {
-            tableModel.setValueAt(rowData[i], rowIndex, i);
+
+     public void updateDataInTable(int rowIndex, Object[] rowData) {
+        // Check if rowIndex is valid
+        if (rowIndex >= 0 && rowIndex < tableModel.getRowCount()) {
+            for (int i = 0; i < rowData.length; i++) {
+                tableModel.setValueAt(rowData[i], rowIndex, i);
+            }
+        } else {
+            System.out.println("Invalid row index");
         }
     }
-    
-    public void deleteDataFromTable(int rowIndex) {
-        tableModel.removeRow(rowIndex);
+
+
+       public void deleteDataFromTable(int rowIndex) {
+        // Check if rowIndex is valid
+        if (rowIndex >= 0 && rowIndex < tableModel.getRowCount()) {
+            tableModel.removeRow(rowIndex);
+        } else {
+            System.out.println("Invalid row index");
+        }
     }
-    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -91,12 +125,11 @@ public class TransactionTable extends javax.swing.JFrame {
         jButton7 = new javax.swing.JButton();
         btnSummary = new javax.swing.JButton();
         lblTransactionTbl = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        transactiontbl = new javax.swing.JTable();
         btnEdit = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tblTransaction = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setPreferredSize(new java.awt.Dimension(1000, 600));
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
         jPanel1.setPreferredSize(new java.awt.Dimension(1000, 600));
@@ -177,7 +210,7 @@ public class TransactionTable extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnSummary)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(340, Short.MAX_VALUE))
         );
 
         lblTransactionTbl.setBackground(new java.awt.Color(255, 255, 255));
@@ -189,27 +222,6 @@ public class TransactionTable extends javax.swing.JFrame {
         lblTransactionTbl.setAlignmentY(0.0F);
         lblTransactionTbl.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 
-        transactiontbl.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
-            },
-            new String [] {
-                "Item ID", "Category", "Item name", "Quantity", "Price", "Transaction Type", "Date"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.Object.class, java.lang.Object.class, java.lang.String.class, java.lang.Float.class, java.lang.Double.class, java.lang.Object.class, java.lang.Object.class
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-        });
-        jScrollPane1.setViewportView(transactiontbl);
-
         btnEdit.setText("Edit");
         btnEdit.setBorderPainted(false);
         btnEdit.addActionListener(new java.awt.event.ActionListener() {
@@ -217,6 +229,22 @@ public class TransactionTable extends javax.swing.JFrame {
                 btnEditActionPerformed(evt);
             }
         });
+
+        tblTransaction.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "Item ID", "Category", "Item Name", "Quantity", "Unit Price", "Transaction Type", "Date Added"
+            }
+        ));
+        jScrollPane1.setViewportView(tblTransaction);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -228,9 +256,9 @@ public class TransactionTable extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lblTransactionTbl, javax.swing.GroupLayout.PREFERRED_SIZE, 401, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addGap(179, 179, 179)
                         .addComponent(btnEdit, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 677, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1))
                 .addGap(0, 239, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -241,22 +269,22 @@ public class TransactionTable extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblTransactionTbl)
                     .addComponent(btnEdit))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 418, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(93, Short.MAX_VALUE))
+                .addGap(28, 28, 28)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 1173, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, 615, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
@@ -283,11 +311,20 @@ public class TransactionTable extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void btnEditActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditActionPerformed
-        InventoryManagement itemPanel = new InventoryManagement();
-        itemPanel.setVisible(true);
-        itemPanel.pack();
-        itemPanel.setLocationRelativeTo(null);
-        this.dispose();
+       int rowIndex = tblTransaction.getSelectedRow();
+        if (rowIndex != -1) {
+            Object[] rowData = new Object[7];
+            for (int i = 0; i < 7; i++) {
+                rowData[i] = tblTransaction.getValueAt(rowIndex, i);
+            }
+            InventoryManagement itemPanel = new InventoryManagement(rowData);
+            itemPanel.setVisible(true);
+            itemPanel.pack();
+            itemPanel.setLocationRelativeTo(null);
+            dispose(); // Close the TransactionTable window
+        } else {
+            JOptionPane.showMessageDialog(null, "Please select a row to edit.");
+        }
     }//GEN-LAST:event_btnEditActionPerformed
 
     private void btnSummaryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSummaryActionPerformed
@@ -340,7 +377,7 @@ public class TransactionTable extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JLabel lblTransactionTbl;
-    private javax.swing.JTable transactiontbl;
+    private javax.swing.JTable tblTransaction;
     // End of variables declaration//GEN-END:variables
 
     void setItems(List<InventoryItem> items) {
@@ -351,6 +388,10 @@ public class TransactionTable extends javax.swing.JFrame {
         Object[] rowData = {item.getId(), item.getName(), item.getPrice()};
         model.addRow(rowData);
         }
+    }
+
+    List<InventoryItem> getItems() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
 
